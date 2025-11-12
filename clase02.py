@@ -3,19 +3,19 @@
 # --- TEMA: SISTEMAS DE NUMERACIÓN ---
 # Python tiene funciones integradas para convertir entre bases numéricas.
 
-decimal_number = 170
+numero_decimal = 170
 
 # La función bin() convierte a binario (prefijo '0b')
-binary_representation = bin(decimal_number)
-print(f"El número decimal {decimal_number} es {binary_representation} en binario.") # Salida: 0b10101010
+binary_representation = bin(numero_decimal)
+print(f"El número decimal {numero_decimal} es {binary_representation} en binario.") # Salida: 0b10101010
 
 # La función oct() convierte a octal (prefijo '0o')
-octal_representation = oct(decimal_number)
-print(f"El número decimal {decimal_number} es {octal_representation} en octal.") # Salida: 0o252
+octal_representation = oct(numero_decimal)
+print(f"El número decimal {numero_decimal} es {octal_representation} en octal.") # Salida: 0o252
 
 # La función hex() convierte a hexadecimal (prefijo '0x')
-hex_representation = hex(decimal_number)
-print(f"El número decimal {decimal_number} es {hex_representation} en hexadecimal.") # Salida: 0xaa
+hex_representation = hex(numero_decimal)
+print(f"El número decimal {numero_decimal} es {hex_representation} en hexadecimal.") # Salida: 0xaa
 
 # Para convertir de vuelta, usamos int(numero_como_string, base_original)
 print(f"El binario 10101010 es {int('10101010', 2)} en decimal.")

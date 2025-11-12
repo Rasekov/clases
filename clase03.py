@@ -28,15 +28,15 @@ anio_nacimiento_str = input("Introduce tu año de nacimiento: ")
 # Es CRUCIAL convertir el texto a número antes de operar.
 # Esto se llama "Type Casting" (Conversión de tipo).
 anio_nacimiento = int(anio_nacimiento_str)
-anio_actual = 2025 # Usamos una variable como si fuera una constante
+ANHO_ACTUAL = 2025 # Usamos una variable como si fuera una constante
 
 # Aquí se aplican los operadores aritméticos.
-edad = anio_actual - anio_nacimiento
+edad = ANHO_ACTUAL - anio_nacimiento
 
 # --- SALIDA (Output) ---
 # La función print() muestra los resultados en la pantalla.
 print(f"Hola, {nombre_usuario}.")
-print(f"Si estamos en {anio_actual}, tu edad es o será de {edad} años.")
+print(f"Si estamos en {ANHO_ACTUAL}, tu edad es o será de {edad} años.")
 
 # Ejemplo de otros operadores:
 # // (división entera) y % (módulo/resto)

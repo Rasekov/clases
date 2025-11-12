@@ -19,7 +19,7 @@ print("4. Salgo de casa y voy a la parada del autobús.")
 esta_lloviendo = False # Cambia a True para ver el otro resultado
 
 print("5. Miro por la ventana.")
-if esta_lloviendo == True:
+if esta_lloviendo is True:
     print("   -> Como está lloviendo, cojo el paraguas.")
 else:
     print("   -> Como no está lloviendo, no cojo el paraguas.")
@@ -32,7 +32,7 @@ autobus_ha_llegado = False
 
 print("6. Espero en la parada.")
 # Este bucle 'while' simula la espera repetitiva.
-while autobus_ha_llegado == False:
+while autobus_ha_llegado is False:
     print(f"   -> Minuto {minutos_esperando}: El autobús no ha llegado. Sigo esperando.")
     minutos_esperando = minutos_esperando + 1
     if minutos_esperando == 5: # Simulación: el autobús llega a los 5 minutos.
