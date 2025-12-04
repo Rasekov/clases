@@ -41,7 +41,7 @@
 #               ┌────┴────┐                            ┌─────┴──────┐
 #               │         │                            │            │
 #   ┌──────────────────┐┌──────────────────┐┌────────────────────┐┌──────────────────┐
-#   │     Contrato     ││      NDA         ││        Email       ││ DocumentoArchivo │
+#   │     Contrato     ││      NDA         ││        Email       ││ Archivo          │
 #   │------------------││------------------││--------------------││------------------│
 #   │ partes           ││ parte_divulgadora││ remitente          ││ datos            │
 #   │ valor            ││ parte_receptora  ││ destinatario       ││------------------│
@@ -287,10 +287,10 @@ class Email(DocumentoDigital):
 # ==============================================================================
 # DOCUMENTO DE ARCHIVO - Otra herencia de segundo nivel
 # ==============================================================================
-# DocumentoArchivo hereda de DocumentoDigital (hermano de Email)
+# Archivo hereda de DocumentoDigital (hermano de Email)
 # Agrega métodos para análisis de datos CSV y visualización
 
-class DocumentoArchivo(DocumentoDigital):
+class Archivo(DocumentoDigital):
     tipo_documento = "Archivo"
     def __init__(self, nombre, tipo_documento, fecha, ruta_archivo):
         super().__init__(nombre, self.tipo_documento, fecha, ruta_archivo)
@@ -349,6 +349,47 @@ class DocumentoArchivo(DocumentoDigital):
         print(f"Gráfico guardado en {nombre_archivo}")
         
         plt.close()
+
+# ==============================================================================
+# EMAIL ATTACHMENT - Herencia Múltiple
+# ==============================================================================
+# EmailAttachment hereda de AMBOS Email Y Archivo
+# Esto demuestra que una clase puede heredar de múltiples padres
+# Obtiene métodos relacionados con email (marcar_leido, alternar_estrella)
+# Y métodos de análisis de archivos (cargar_csv, analizar_datos, graficar_datos)
+
+class EmailAttachment(Email, Archivo):
+    tipo_documento = "EmailAttachment"
+    
+    def __init__(self, nombre, fecha, remitente, destinatario, asunto, ruta_archivo):
+        # Inicializar Email (que inicializa DocumentoDigital y Documento)
+        Email.__init__(self, nombre, fecha, remitente, destinatario, asunto)
+        # Inicializar atributos específicos de Archivo
+        self.ruta_archivo = ruta_archivo
+        self.datos = []
+        self.tipo_documento = "EmailAttachment"
+    
+    def adjuntar_analisis(self):
+        """MÉTODO NUEVO - combinar funcionalidad de email y archivo"""
+        if not self.datos:
+            return "No hay datos para analizar. Usa cargar_csv() primero."
+        
+        stats = self.analizar_datos()
+        mensaje = f"\n📎 ANÁLISIS DEL ADJUNTO:\n"
+        mensaje += f"   Archivo: {self.ruta_archivo}\n"
+        mensaje += f"   Total puntos de datos: {stats['cantidad']}\n"
+        mensaje += f"   Promedio: {stats['promedio']:.2f}\n"
+        return mensaje
+    
+    def mostrar_info(self):
+        """SOBRESCRIBIR - combinar información de email Y archivo"""
+        # Obtener info básica del email
+        info = Email.mostrar_info(self)
+        # Agregar información del adjunto
+        info += f"\n📎 Adjunto: {self.ruta_archivo} (v{self.version})"
+        if self.datos:
+            info += f"\n   Filas de datos: {len(self.datos)}"
+        return info
 
 
 # %% DEMOSTRACIÓN 1: Crear Documentos Físicos
@@ -439,7 +480,7 @@ print("\n\n" + "=" * 70)
 print("PARTE 3: DOCUMENTO DE ARCHIVO CON ANÁLISIS DE DATOS")
 print("=" * 70)
 
-archivo_caso = DocumentoArchivo(
+archivo_caso = Archivo(
     nombre="Estadísticas de Casos",
     tipo_documento="CSV",
     fecha="03-12-24",
@@ -463,13 +504,13 @@ with open("horas_facturables.csv", 'w', newline='') as f:
     escritor.writerows(datos)
 print("Creado horas_facturables.csv")
 
-print("\n--- DocumentoArchivo hereda de DocumentoDigital Y Documento ---")
+print("\n--- Archivo hereda de DocumentoDigital Y Documento ---")
 print(archivo_caso.agregar_etiqueta("analítica"))       # Heredado de Documento
 print(archivo_caso.actualizar_version("Agregados datos Q1-Q2"))  # Heredado de DocumentoDigital
 
 print("\n--- Probando métodos ESPECÍFICOS de ARCHIVO ---")
-archivo_caso.cargar_csv("horas_facturables.csv")    # Método propio de DocumentoArchivo
-estadisticas = archivo_caso.analizar_datos()        # Método propio de DocumentoArchivo
+archivo_caso.cargar_csv("horas_facturables.csv")    # Método propio de Archivo
+estadisticas = archivo_caso.analizar_datos()        # Método propio de Archivo
 
 print(f"\nResultados del Análisis de Datos:")
 print(f"  Total de horas: {estadisticas['suma']}")
@@ -478,7 +519,7 @@ print(f"  Máximo: {estadisticas['maximo']}")
 print(f"  Mínimo: {estadisticas['minimo']}")
 
 print("\n--- Creando visualización ---")
-archivo_caso.graficar_datos()      # Método propio de DocumentoArchivo
+archivo_caso.graficar_datos()      # Método propio de Archivo
 
 print("\n--- Visualización completa del documento de archivo ---")
 print(archivo_caso.mostrar_info())
@@ -507,3 +548,57 @@ print("Este método se hereda de la clase base Documento por TODOS los tipos:\n"
 for doc in todos_documentos:
     # Mismo método, misma implementación, heredada por todos
     print(doc.agregar_etiqueta("revisado-2025"))
+
+# %% DEMOSTRACIÓN 5: Herencia Múltiple
+print("\n\n" + "=" * 70)
+print("PARTE 5: HERENCIA MÚLTIPLE - EmailAttachment")
+print("=" * 70)
+
+# Crear datos de facturación para el adjunto
+datos_facturacion = [
+    ["Servicio", "Costo"],
+    ["Consulta Legal", "500"],
+    ["Redacción Contrato", "1200"],
+    ["Revisión Documentos", "300"],
+    ["Comparecencia", "800"]
+]
+
+with open("facturacion_cliente.csv", 'w', newline='') as f:
+    escritor = csv.writer(f)
+    escritor.writerows(datos_facturacion)
+
+# Crear email con adjunto de datos
+email_con_datos = EmailAttachment(
+    nombre="Factura Mensual",
+    fecha="04-12-24",
+    remitente="contabilidad@bufete.com",
+    destinatario="cliente@empresa.com",
+    asunto="Factura de Servicios Legales - Diciembre 2024",
+    ruta_archivo="./facturacion_cliente.csv"
+)
+
+print("\n--- EmailAttachment hereda de AMBOS Email Y Archivo ---")
+print("¡Puede usar métodos de ambas clases padre!")
+
+print("\n--- Métodos heredados de Email ---")
+print(email_con_datos.marcar_leido())           # De Email
+print(email_con_datos.alternar_estrella())      # De Email
+
+print("\n--- Métodos heredados de Archivo ---")
+email_con_datos.cargar_csv("facturacion_cliente.csv")  # De Archivo
+print("Datos CSV cargados exitosamente")
+
+print("\n--- Método NUEVO que combina ambas funcionalidades ---")
+print(email_con_datos.adjuntar_analisis())      # Método propio que usa ambos padres
+
+print("\n--- Generando gráfico del adjunto ---")
+email_con_datos.graficar_datos()                # De Archivo
+
+print("\n--- Visualización completa (combina info de ambos padres) ---")
+print(email_con_datos.mostrar_info())
+
+print("\n--- Verificando herencia múltiple ---")
+print(f"¿Es un Email? {isinstance(email_con_datos, Email)}")
+print(f"¿Es un Archivo? {isinstance(email_con_datos, Archivo)}")
+print(f"¿Es un DocumentoDigital? {isinstance(email_con_datos, DocumentoDigital)}")
+print(f"¿Es un Documento? {isinstance(email_con_datos, Documento)}")
